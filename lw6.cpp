@@ -30,6 +30,7 @@ int* findZeroCells(int** matrix, int rows, int cols, int& count) {
         for (int j = 0; j < cols; j++) {
             if (matrix[i][j] == 0) {
                 count++;
+                break;
             }
         }
     }
@@ -134,17 +135,6 @@ int main() {
         if (B < 0) cout << "Переменная не может быть отрицательной!" << endl;
     } while (B < 0);
 
-    do {
-        cout << "Введите значение переменной C = ";
-        cin >> C;
-        if (C < 0) cout << "Переменная не может быть отрицательной!" << endl;
-    } while (C < 0);
-
-    do {
-        cout << "Введите значение переменной D = ";
-        cin >> D;
-        if (D < 0) cout << "Переменная не может быть отрицательной!" << endl;
-    } while (D < 0);
 
 
     int** initialMatrix = (int**)malloc(2 * sizeof(int*));
@@ -239,4 +229,6 @@ int main() {
     delete BVar2;
 
     return 0;
+
+    //
 }
