@@ -17,7 +17,7 @@ void printMatrix(int** matrix, int rows, int cols) {
     }
 }
 
-int** createExtendedMatrix(int** matrix, int& rows, int& cols) {
+void createExtendedMatrix(int**& matrix, int& rows, int& cols) {
 
     int A = matrix[0][0];
     int B = matrix[0][1];
@@ -43,12 +43,7 @@ int** createExtendedMatrix(int** matrix, int& rows, int& cols) {
             matrix[i][j] = i * C + j * D;
         }
     }
-
-    rows = newRows;
-    cols = newCols;
-    return matrix;
 }
-
 int* findZeroRows(int** matrix, int rows, int cols, int& count) {
     count = 0;
 
@@ -83,7 +78,7 @@ int* findZeroRows(int** matrix, int rows, int cols, int& count) {
     return zeroRows;
 }
 
-int** removeRows(int** matrix, int& rows, int cols, int* rowsToRemove, int removeCount) {
+void removeRows(int**& matrix, int& rows, int cols, int* rowsToRemove, int removeCount) {
     if (removeCount == 0 || rowsToRemove == nullptr) {
         return matrix;
     }
@@ -100,45 +95,17 @@ int** removeRows(int** matrix, int& rows, int cols, int* rowsToRemove, int remov
         return nullptr;
     }
 
-    int** temp = (int**)malloc(newRows * sizeof(int*));
-    int tempIndex = 0;
-
-
-    for (int i = 0; i < rows; i++) {
-        bool remove = false;
-        for (int j = 0; j < removeCount; j++) {
-            if (i == rowsToRemove[j]) {
-                remove = true;
-                break;
+    for (int j = 0; j < removeCount; j++) {
+        int rowToRemove = rowsToRemove[j] - j;
+        for (int col = rowsToRemove; col < cols - 1; col++) {
+            for (int row = 0; row < rows; row++) {
+                matrix[row][col] = matrix[row+1][col];
             }
-        }
-
-        if (!remove) {
-            temp[tempIndex++] = matrix[i];
-        }
-        else {
-            free(matrix[i]);
         }
     }
 
     matrix = (int**)realloc(matrix, newRows * sizeof(int*));
 
-    for (int i = 0; i < newRows; i++) {
-        matrix[i] = temp[i];
-    }
-
-    free(temp);
-    rows = newRows;
-    return matrix;
-}
-
-void freeMatrix(int** matrix, int rows) {
-    if (matrix == nullptr) return;
-
-    for (int i = 0; i < rows; i++) {
-        free(matrix[i]);
-    }
-    free(matrix);
 }
 
 int main() {
@@ -149,7 +116,8 @@ int main() {
     for (int i = 0; i < ROWS; ++i) {
         matrix[i] = (int*)malloc(COLS * sizeof(int));
     }
-    /*
+    
+
     cout << "Введите элементы матрицы " << ROWS << "x" << COLS << ":" << endl;
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLS; ++j) {
@@ -161,12 +129,7 @@ int main() {
             }
         }
     }
-    */
-    cout << "Введите A , B , C , D" << endl;
-    cin >> A >> B >> C >> D;
-    if (A || B < 0) {
-        return 1
-    }
+
 
     int rows = ROWS, cols = COLS;
     matrix = createExtendedMatrix(matrix, rows, cols);
@@ -195,9 +158,6 @@ int main() {
 
     if (zeroRows != nullptr) {
         free(zeroRows);
-    }
-    if (matrix != nullptr) {
-        freeMatrix(matrix, rows);
     }
 
     return 0;
