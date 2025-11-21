@@ -7,7 +7,7 @@ using namespace std;
 const int ROWS = 2;
 const int COLS = 2;
 
-void print_matrix(int** matrix, int rows, int cols) {
+void printMatrix(int** matrix, int rows, int cols) {
     cout << "\nМатрица " << rows << "x" << cols << ":\n";
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -18,19 +18,17 @@ void print_matrix(int** matrix, int rows, int cols) {
 }
 
 int** createExtendedMatrix(int** matrix, int& rows, int& cols) {
-    // A и B из исходной матрицы
-    int A = matrix[0][0]; // количество строк для добавления сверху
-    int B = matrix[0][1]; // количество столбцов для добавления слева
-    int C = matrix[1][0]; // коэффициент C
-    int D = matrix[1][1]; // коэффициент D
+
+    int A = matrix[0][0];
+    int B = matrix[0][1];
+    int C = matrix[1][0];
+    int D = matrix[1][1];
 
     int newRows = ROWS + A;
     int newCols = COLS + B;
 
-    // Перераспределяем память для строк
     matrix = (int**)realloc(matrix, newRows * sizeof(int*));
 
-    // Перераспределяем память для каждой строки
     for (int i = 0; i < newRows; ++i) {
         if (i < ROWS) {
             matrix[i] = (int*)realloc(matrix[i], newCols * sizeof(int));
@@ -40,7 +38,6 @@ int** createExtendedMatrix(int** matrix, int& rows, int& cols) {
         }
     }
 
-    // Заполняем матрицу по формуле i*C + j*D
     for (int i = 0; i < newRows; ++i) {
         for (int j = 0; j < newCols; ++j) {
             matrix[i][j] = i * C + j * D;
@@ -55,7 +52,7 @@ int** createExtendedMatrix(int** matrix, int& rows, int& cols) {
 int* findZeroRows(int** matrix, int rows, int cols, int& count) {
     count = 0;
 
-    // Сначала подсчитываем количество строк с нулями
+
     for (int i = 0; i < rows; i++) {
         bool hasZero = false;
         for (int j = 0; j < cols; j++) {
@@ -69,7 +66,7 @@ int* findZeroRows(int** matrix, int rows, int cols, int& count) {
         }
     }
 
-    // Создаем массив для индексов строк с нулями
+
     int* zeroRows = (int*)malloc(count * sizeof(int));
 
     int index = 0;
@@ -94,7 +91,7 @@ int** removeRows(int** matrix, int& rows, int cols, int* rowsToRemove, int remov
     int newRows = rows - removeCount;
 
     if (newRows <= 0) {
-        // Освобождаем всю память если все строки удалены
+
         for (int i = 0; i < rows; i++) {
             free(matrix[i]);
         }
@@ -103,11 +100,10 @@ int** removeRows(int** matrix, int& rows, int cols, int* rowsToRemove, int remov
         return nullptr;
     }
 
-    // Создаем временный массив для хранения сохраняемых строк
     int** temp = (int**)malloc(newRows * sizeof(int*));
     int tempIndex = 0;
 
-    // Копируем указатели на строки, которые нужно сохранить
+
     for (int i = 0; i < rows; i++) {
         bool remove = false;
         for (int j = 0; j < removeCount; j++) {
@@ -121,15 +117,12 @@ int** removeRows(int** matrix, int& rows, int cols, int* rowsToRemove, int remov
             temp[tempIndex++] = matrix[i];
         }
         else {
-            // Освобождаем память удаляемой строки
             free(matrix[i]);
         }
     }
 
-    // Перераспределяем память основного массива с помощью realloc
     matrix = (int**)realloc(matrix, newRows * sizeof(int*));
 
-    // Копируем сохраненные строки обратно
     for (int i = 0; i < newRows; i++) {
         matrix[i] = temp[i];
     }
@@ -151,12 +144,12 @@ void freeMatrix(int** matrix, int rows) {
 int main() {
     setlocale(LC_ALL, "Ru");
 
-    // Пункт 1: Создание матрицы 2x2
+
     int** matrix = (int**)malloc(ROWS * sizeof(int*));
     for (int i = 0; i < ROWS; ++i) {
         matrix[i] = (int*)malloc(COLS * sizeof(int));
     }
-
+    /*
     cout << "Введите элементы матрицы " << ROWS << "x" << COLS << ":" << endl;
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLS; ++j) {
@@ -168,18 +161,16 @@ int main() {
             }
         }
     }
+    */
+    cout << "Введите A , B , C , D" << endl;
+    cin >> A >> B >> C >> D;
+    if (A || B < 0) {
+        return 1
+    }
 
-    cout << "\nИсходная матрица 2x2:" << endl;
-    print_matrix(matrix, ROWS, COLS);
-
-    // Преобразование матрицы
     int rows = ROWS, cols = COLS;
     matrix = createExtendedMatrix(matrix, rows, cols);
 
-    cout << "\nПосле преобразования:" << endl;
-    print_matrix(matrix, rows, cols);
-
-    // Поиск строк с нулевыми элементами
     int zeroRowsCount;
     int* zeroRows = findZeroRows(matrix, rows, cols, zeroRowsCount);
 
@@ -192,19 +183,16 @@ int main() {
         cout << endl;
     }
 
-    // Удаление строк с нулевыми элементами
     matrix = removeRows(matrix, rows, cols, zeroRows, zeroRowsCount);
 
-    // Вывод результата
     if (matrix != nullptr && rows > 0) {
-        cout << "\nМатрица после удаления строк с нулевыми элементами:" << endl;
-        print_matrix(matrix, rows, cols);
+        cout << "\nМатрица:" << endl;
+        printMatrix(matrix, rows, cols);
     }
     else {
         cout << "\nВсе строки были удалены!" << endl;
     }
 
-    // Освобождение памяти
     if (zeroRows != nullptr) {
         free(zeroRows);
     }
